@@ -1,0 +1,35 @@
+Special Numbers:
+    there are 3 special numbers in javascript that don't behave like the normal numbers
+        Infinity
+        -Infinity
+        NaN (0/0, Infinity-Infinity)
+
+Escaping Character:
+    use \ (backslash)
+        "A newline character is written like \"\\n\"."
+
+Backtick-quoted Strings:
+    aka Template Literals
+        `half of 100 is ${100 / 2}`
+            expression inside ${100 / 2} is always computed
+
+Empty Values:
+    null
+    undefined
+        both denote absence of meaningful value
+        the difference in meaning between them is an accident of Js design and it really doesn't matter
+
+Automatic Type Conversion:
+    Type Coercion is what results in above unconventional outputs
+        console.log(8 * null) // 0
+        console.log("5" - 1) // 4
+        console.log("5" + 1) // 51
+        console.log("five" * 2) // NaN
+        console.log(false == 0) // true
+        console.log(null == undefined); // true
+        console.log(null == 0); // false
+        console.log("" == false) // true
+    when you do not want any type conversion to happen
+        === // precisely equal
+        !== // precisely not equal
+            console.log("" === false) // false, as expected
