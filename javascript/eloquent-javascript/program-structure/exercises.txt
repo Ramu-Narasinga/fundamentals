@@ -1,0 +1,8 @@
+Looping a triange:
+    Write a loop that makes seven calls to console.log to output the following
+    triangle:
+        jsFiddle-Link: https://jsfiddle.net/RamuNarasinga/snv9zatq/
+    FizzBuzz:
+        jsFiddle-Link: https://jsfiddle.net/RamuNarasinga/67eoLjfw/
+    ChessBoard:
+        jsFiddle-Link: https://jsfiddle.net/RamuNarasinga/61t4q9zn/

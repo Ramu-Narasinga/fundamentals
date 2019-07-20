@@ -3,11 +3,11 @@
 ***#file-structure***
 
  - ***programming-language***   
-	 - *book-name(s)*
-		- *chapter-name(s)*
-			- *topic-name(s)*
+	 - *book-name*
+		- *chapter-name*
+			- *topics*
 				- *topic-examples-provided (as a reference for explanation, in the book)*
-		 	- *excercise(s)*
+		 	- *excercises*
 				- *exercises(provided at the end of each chapter?)*
 			- *practise-problems*
 				- *practise-problems(off the more external resources, covering relevant examples)*
