@@ -1,0 +1,181 @@
+Defining a fuction:
+    1.  a function can return a value or make side effects.
+    2.  a return keyword withour any expression after it returns undefined.
+    3.  Example: 
+            // defining a function
+            a.  const square = function(x) {
+                    return x * x;
+                };
+                console.log(square(12));
+                // → 144
+
+Bindings and Scope:
+    1.  Each binding has a scope which is part of the program in which he binding visible.
+    2.  Global, local bindings.
+    3.  everytime a function is called, new instances within that function are created.
+    4.  binding declared with 'let' and 'const' are in fact local to the block that they are defined in.
+    5.  Example:
+        a.  let x = 10
+            if (true) {
+                let y=20;
+                var z=30;
+                console.log(x+y+z); // 60
+            }
+            // y is not visible here
+            console.log(x+z); // 40
+        
+        b.  const halve = function(n) {
+                return n/2;
+            };
+
+            let n = 10;
+            console.log(halve(100)); // 50
+            console.log(n); // 10
+
+Nested Scope:
+    1.  const hummus = function(factor) {
+        const ingredient = function(amount, unit, name)) {
+            let ingredientAmount = amount * factor;
+            if (ingredientAmount > 1) {
+                unit += "s";
+            }
+            console.log(`${ingredientAmount} ${unit} ${name}`);
+        };
+        ingredient(1, "can", "chickpeas");
+        ingredient(0.25, "cup", "tahini");
+        ingredient(0.25, "cup", "lemon juice");
+        ingredient(1, "clove", "garlic");
+        ingredient(2, "tablespoon", "olive oil");
+        ingredient(0.5, "teaspoon", "cumin");
+    }
+
+    2.  Lexical Scoping: (an approach to binding visibility)
+        Each local scope can see all the local scopes that contain in it, an all scopes can see the global scope.
+
+Function Declaration:
+    1.  function  square(x) {
+            return x * x;
+        }
+    2.  there is one thing achieved using function definition like this
+        console.log("The future says:", future());
+
+        function future() {
+            return "You'll never have flying cars";
+        }
+
+        The preceding code works, even though the function is defined below the code
+        that uses it.
+
+Arrow Functions:
+    1.  const power = (base, exponent) => {
+
+            let result = 1;
+            for (let count = 0; count < exponent; count++) {
+
+                result *= base;
+            }
+            
+            return result;
+        };
+    2.  simply put, it is more like, this input(parameters) produces this result(body);
+    3.  these both are same:
+            const square1 = (x) => { return x * x; };
+            const square2 = x => x * x;
+    4.  // no parameters Example
+        const horn = () => {
+            console.log("Toot");
+        };
+    5.  There’s no deep reason to have both arrow functions and function expressions in the language. 
+    6.  Arrow functions were added in 2015, mostly to make it to write small functions in a less verbose(using less words) way
+
+Call Stack:
+    1.  Every time a function is called, the current context is stored on top of this call stack.
+    2.  when a functions returns, it removes the top context from the stack and uses that context to continue execution.
+    3.  storing the stack requires space in computer's memory.
+
+Optional Arguments:
+    1.  function square(x) { return x * x; }
+        console.log(square(4, true, "hedgehog"));
+        // → 16
+    2.  initializing parameter in function params, when the value is not provided
+        function power(base, exponent = 2) {
+        
+            let result = 1;
+            
+            for (let count = 0; count < exponent; count++) {
+                result *= base;
+            }
+            
+            return result;
+        }
+
+        console.log(power(4));
+        // → 16
+        console.log(power(2, 6));
+        // → 64
+
+Closure:
+    1.  function wrapValue(n) {
+            let local = n;
+            return () => local;
+        }
+
+        let wrap1 = wrapValue(1);
+        let wrap2 = wrapValue(2);
+        console.log(wrap1());
+        // → 1
+        console.log(wrap2());
+        // → 2
+
+        BEING ABLE TO REFERENCE A SPECIFIC INSTANCE OF LOCAL BINDING IN AN ENCLOSING SCOPE- is called closure.
+    2.  function multiplier(factor) {
+            return number => number * factor;
+        }
+
+        let twice = multiplier(2);
+        console.log(twice(5));
+        // → 10
+    3.  a good mental model is to think of functions values as containing both the code in their body and the env in which they are created
+    4.  when called, the function body sees the env in which it was created, not the env in which it is called.
+
+Recursion:  
+    1.  function calling itself.
+    2.  EXAMPLE:
+        function power(base, exponent) {
+            if (exponent == 0) {
+                return 1;
+            } else {
+                return base * power(base, exponent - 1);
+            }
+        }
+        console.log(power(2, 3));
+        // → 8
+    3.  This implementation has one problem:
+        in typical js implementation, it's about three times slower than the looping version
+        Running thru a loop is much cheaper than calling function multiple times
+
+Growing functions:
+    1. DRY -> Do not Repeat Yourself, else more code to control and more chances of mistakes
+    2. Use small generic function names
+
+Functions and SideEffects:
+    1.  functions can be roughly divided into
+        a.  those that are called for their side effects
+        b.  those that are called for their return values 
+    2.  PURE FUNCTION:
+        a.  a specific kind of value-producing function that not only has no side effects, but also doesn't rely on side effects from other code, 
+        for example - it doesn't read global blindings whose values that might change
+        b.  Pleasant property that, when called with same arguments, it always produces the same result and doesn't do anything else
+
+SUMMARY:    
+    1.  // Define f to hold a function value
+        const f = function(a) {
+        console.log(a + 2);
+        };
+        // Declare g to be a function
+        function g(a, b) {
+        return a * b * 3.5;
+        }
+        // A less verbose function value
+        let h = a => a % 3;
+    2.  
