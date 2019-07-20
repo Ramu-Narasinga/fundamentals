@@ -1,0 +1,31 @@
+Expression and Statements
+    a fragment of code that produces a value is Expression.
+    expression corresponds to a sentence fragment, statement corresponds to a full sentence.
+    simple kind of statement is an expression with a semicolon after it:
+        1;
+        !false;
+
+Binding:
+    let name = "dev"
+
+Environment:
+    Collection of Bindings and their values that exist at a given time is called Environment
+    When a program starts, this env is not empty. It always contains Bindings that are part of the language standard
+
+Function:
+    piece of program wrapped in a value
+    Example:
+        console.log()
+            console is an object with a property, log, which holds its value as a function
+    switch-case syntax in javascript:
+        switch (prompt("What is the weather like?") {
+            case    "rainy":
+                console.log("rememer the umbrella");
+                break;
+            case    "cloudy":
+                console.log("Go outside");
+                break;
+            default:
+                console.log("unknown weather type");
+                break;
+        }
