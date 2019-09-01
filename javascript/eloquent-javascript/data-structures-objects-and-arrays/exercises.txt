@@ -43,3 +43,10 @@ A LIST:
     If you haven’t already, also write a recursive version of nth.
 
     jsFiddle-Link: https://jsfiddle.net/RamuNarasinga/xvdh6g12/
+
+DEEPEQUAL:
+
+    compares two objects and typeof null is object, checks if arguments passed are objects or strings and 
+    returns true if all the object properties are equal in value
+
+    jsFiddle-Link: https://jsfiddle.net/RamuNarasinga/hfkzq7m9/
