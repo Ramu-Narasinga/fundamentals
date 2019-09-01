@@ -11,3 +11,7 @@
 				- *exercises(provided at the end of each chapter?)*
 			- *practise-problems*
 				- *practise-problems(off the more external resources, covering relevant examples)*
+
+ - ***NOTE:***
+	PLEASE CHECK CONSOLE ON JSFIDDLE LINKS, IT HAS THE OUTPUT
+

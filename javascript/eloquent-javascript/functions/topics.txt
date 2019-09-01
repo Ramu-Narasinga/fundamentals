@@ -164,7 +164,7 @@ Functions and SideEffects:
         b.  those that are called for their return values 
     2.  PURE FUNCTION:
         a.  a specific kind of value-producing function that not only has no side effects, but also doesn't rely on side effects from other code, 
-        for example - it doesn't read global blindings whose values that might change
+        for example - it doesn't read global blindings whose values might change
         b.  Pleasant property that, when called with same arguments, it always produces the same result and doesn't do anything else
 
 SUMMARY:    

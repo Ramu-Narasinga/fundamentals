@@ -1,0 +1,232 @@
+Array:
+    1.  starts at o
+
+Properties:
+    1.  Almost all javascript values have properties
+        a.  Exceptions are null and undefined, if you access a property on one of these nonvalues,you get an error
+            Ex: null.length
+                // -> TypeError: null has no properties
+    2.  There are two ways you can access a property
+        a.  Dot and square brackets
+            Ex: value.x and value[x]
+        b.  The difference is in how x is interpreted
+            When using dot, the word after a dot is the literal name of the property
+            When using square brackets, the expression between brackets is evaluated to get the property name
+            Ex: Ref: '2-b-array-acces-using-dot.png'
+        c.  You can also get array length by:
+            array['length']
+            array.length (easier to write)
+
+Methods:
+    1.  Both string and arrays contain a number of properties that hold function values
+        Ex: let doh = "Doh";
+            console.log(typeof doh.toUpperCase);
+            // → function
+            console.log(doh.toUpperCase());
+            // → DOH
+        a.  Interestingly though we do not pass any paramter to toUpperCase func, 'doh' still gets converted to upper case
+            // THIS IS EXPLAINED IN SECRET LIFE OF OBJECTS
+    2.  Two methods to manipulate arrays
+        Ex: let sequence = [1, 2, 3]
+            sequence.push(4);
+            sequence.push(5);
+            console.log(sequence);
+            // → [1, 2, 3, 4, 5]
+            console.log(sequence.pop());
+            // → 5
+            console.log(sequence);
+            // → [1, 2, 3, 4]
+
+Objects:
+    1.  when to use '' in property name when defining an object json.
+        Ex: let descriptions = {
+                work: "Went to work",
+                "touched tree": "Touched a tree"
+            };
+    2. more examples, like delete
+        Ex: let anObject = {left: 1, right: 2};
+            console.log(anObject.left);
+            // → 1
+            delete anObject.left;
+            console.log(anObject.left);
+            // → undefined
+            console.log("left" in anObject);
+            // → false
+            console.log("right" in anObject);
+            // → true
+        a.  The binary 'in' operator, when applied to a string and an object, tells you whether that object has a 
+            property with that name
+        b.  The difference between setting a property to undefined and actually deleting it is that, 
+            in the first case, the object still has property
+            in the second case, the property is no longer present and 'in' will return false
+        c.  Object.keys()
+            Ex: console.log(Object.keys({x: 0, y: 0, z: 2}));
+                // → ["x", "y", "z"]
+        d.  Object.assign()
+            Ex: let objectA = {a: 1, b: 2};
+                Object.assign(objectA, {b: 3, c: 4});
+                console.log(objectA);
+                // → {a: 1, b: 3, c: 4}
+    3.  typeof [] --> object
+
+Mutability:
+    1.  Numbers, Booleans, strins are immutable
+        a.  it is not possible to change values of those types. You can combine them and derive new values from them
+            Ex:  If you have a string that contains "cat", it is not possible for other code to change a
+                character in your string to make it spell "rat"
+    2.  Objects work differently, you can change their properties, causing a single object value to have different
+        content at different times.
+    3.  With objects, there is a difference between having two references to the same object
+        and having two different objects that contain the same properties.
+            Ex: let object1 = {value: 10};
+                let object2 = object1;
+                let object3 = {value: 10};
+                console.log(object1 == object2);
+                // → true
+                console.log(object1 == object3);
+                // → false
+
+                object1.value = 15;
+                console.log(object2.value);
+                // → 15
+                console.log(object3.value);
+                // → 10
+    4.  using const in defining an object variable
+        Ex: const score = {visitors: 0, home: 0};
+            // This is okay
+            score.visitors = 1;
+            // This isn't allowed
+            score = {visitors: 1, home: 1};
+    5. {events, name} is same as {events: events, name: name}
+
+Array Loops:
+    1.  Arrays iteration can be done in 2 ways
+        a.  for (let i = 0; i < JOURNAL.length; i++) {
+                let entry = JOURNAL[i];
+                // Do something with entry
+            }
+        b.  for (let entry of JOURNAL) { // this helps in iterating strings also
+                console.log(`${entry.events.length} events.`);
+            }
+
+Further Arrayology:
+    1.  PUSH and POP operate at the end of array
+    2.  UNSHIFT and SHIFT operate at the start of an array
+        Ex: let todoList = [];
+            function remember(task) {
+            todoList.push(task);
+            }
+            function getTask() {
+            return todoList.shift();
+            }
+            function rememberUrgently(task) {
+            todoList.unshift(task);
+            }
+            That program manages a queue of tasks. You add tasks to the end of the
+            queue by calling remember("groceries"), and when you’re ready to do something, you call getTask() to get (and remove) the front item from the queue.
+            The rememberUrgently function also adds a task but adds it to the front instead
+            of the back of the queue.
+    3.  To get the index of an item, we have methods like
+        a.  indexOf()
+        b.  lastIndexOf()
+    4.  Fundamental array methods:
+        a.  slice:
+            Takes start and end indices and returns an array that has only elements between them indices,
+            start index is inclusive, 
+            end index is exclusive.
+            Ex: 
+            1.  console.log([0, 1, 2, 3, 4].slice(2, 4));
+                // → [2, 3]
+                console.log([0, 1, 2, 3, 4].slice(2));
+                // → [2, 3, 4]
+                console.log([0, 1].slice());
+                // -> [0, 1] copies the array
+
+            2.  this function takes array, index and returns an array that has an item removed at that index
+                function remove(array, index) {
+                    return array.slice(0, index)
+                    .concat(array.slice(index + 1));
+                }
+                console.log(remove(["a", "b", "c", "d", "e"], 2));
+                // → ["a", "b", "d", "e"]
+
+Strings and Their Properties:
+    1.  Though we have properties like length and toUpperCase from string values, but if you add a new property to 
+        a string, it does not stick
+        Ex: let kim = "Kim";
+            kim.age = 88; // js doesn't complain when you do this
+            console.log(kim.age);
+            // → undefined
+        b.  Strings, Numbers, Boolean are all IMMUTABLE
+        c.  Methods:
+            1.  Slice, indexOf work on String as well, just like how they do on ARRAYS
+            2.  trim removes whitespace (spaces, newlines, tabs, and similar characters) from the start and end of 
+                the string.
+                Ex: console.log(" okay \n ".trim());
+                    // → okay
+            3.  padStart: takes desired length and padding character as arguments
+                Ex: console.log(String(6).padStart(3, "0"));
+                    // → 006
+            4.  Split and Join example
+                Ex: let sentence = "Secretarybirds specialize in stomping";
+                    let words = sentence.split(" ");
+                    console.log(words);
+                    // → ["Secretarybirds", "specialize", "in", "stomping"]
+                    console.log(words.join(". "));
+                    // → Secretarybirds. specialize. in. stomping
+            5.  Repeat method example   
+                Ex: console.log("LA".repeat(3));
+                    // → LALALA 
+            6.  Length and indexOf examples:
+                let string = "abc";
+                console.log(string.length);
+                // → 3
+                console.log(string[1]);
+                // → b
+
+REST PARAMETERS (...)(TRIPLE-DOTS):
+    1.  it can be useful for a function to accepts any number of arguments  
+        For example, Math.max computes maximum of all the arguments it is given
+        Ex: 
+        1.  function max(...numbers) {
+
+                let result = -Infinity;
+
+                for (let number of numbers) {
+
+                    if (number > result) result = number;
+                }
+
+                return result;
+            }
+
+            console.log(max(4, 1, 9, -2));
+            // → 9
+
+            when such a function above is called, the 'rest paramter' is bound to an array containing all further 
+            arguments
+
+        2.  You can use above function by passing array as param with triple DOTS 
+            Ex: let numbers = [5, 1, 7];
+                console.log(max(...numbers));
+                // → 7
+        3.  another exampe kind:
+            Ex: max(9, ...numbers, 2)
+                FollowUp Meaning:
+                    let words = ["never", "fully"];
+                    console.log(["will", ...words, "understand"]);
+                    // → ["will", "never", "fully", "understand"]
+
+SUMMARY:
+    Objects and arrays (which are a specific kind of object) provide ways to group
+    several values into a single value. Conceptually, this allows us to put a bunch
+    of related things in a bag and run around with the bag, instead of wrapping
+    our arms around all of the individual things and trying to hold on to them
+    separately.
+    Most values in JavaScript have properties, the exceptions being null and
+    undefined. Properties are accessed using value.prop or value["prop"]. Objects tend to use names for 
+    their properties and store more or less a fixed set of them. Arrays, on the other hand, usually contain 
+    varying amounts of conceptually identical values and use numbers (starting from 0) as the names of
+    their properties.
+    There are some named properties in arrays, such as length and a number of
+    methods. Methods are functions that live in properties and (usually) act on
