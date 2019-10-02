@@ -1,0 +1,257 @@
+NOTE: 
+    1.  A LARGE PROGRAM PROVIDES A LOT OF SPACE FOR UNKNOWN BUGS TO HIDE AND MAKE THEM HARDER TO FIND
+    2.  The following object is used in the following Examples
+        SCRIPTS = [
+                    {
+                        name: "Coptic",
+                        ranges: [[994, 1008], [11392, 11508], [11513, 11520]],
+                        86
+                        direction: "ltr",
+                        year: -200,
+                        living: false,
+                        link: "https://en.wikipedia.org/wiki/Coptic_alphabet"
+                    }
+                ];
+
+ABSTRACTION:
+    1.  Abstractions hide details and give us the ability to talk about problems at higher level.
+
+ABSTRACTING REPETITION:
+    1.  Ex1:
+            function repeat(n, action) {
+                for (let i = 0; i < n; i++) {
+                    action(i);
+                }
+            }
+
+            repeat(3, console.log);
+            // → 0
+            // → 1
+            // → 2
+    2.  Ex2:
+            calling repeat function defined above with function defined in argument like in the following example
+            let labels = [];
+
+            repeat(5, i => {
+                labels.push(`Unit ${i + 1}`);
+            });
+
+            console.log(labels);
+            // → ["Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5"]
+
+HIGHER-ORDER FUNCTIONS:
+    Functions that operate on other functions, either by taking them as arguments or by returning them are 
+    called HIGHER-ORDER FUNCTIONS 
+    Examples:
+    1.  function greaterThan(n) {
+            return m => m > n;
+        }
+
+        let greaterThan10 = greaterThan(10);
+
+        console.log(greaterThan10(11));
+        // → true
+
+    2.  function noisy(f) {
+            return (...args) => {
+                console.log("calling with", args);
+                let result = f(...args);
+                console.log("called with", args, ", returned", result);
+                return result;
+            };
+        }
+
+        noisy(Math.min)(3, 2, 1);
+
+        // → calling with [3, 2, 1]
+        // → called with [3, 2, 1] , returned 1
+
+    3.  function unless(test, then) {
+            if (!test) then();
+        }
+
+        function repeat(times, body) {
+
+            for(let i = 0; i < times; i++) body(i);
+        }
+
+        repeat(3, n => {
+                unless(n % 2 == 1, () => {
+                console.log(n, "is even");
+            });
+        });
+        // → 0 is even
+        // → 2 is even
+
+    NOTE:
+    forEach is a built-in method that acts like for/of loop as a higher order function
+    Ex: ["A", "B"].forEach(l => console.log(l));
+        // → A
+        // → B
+
+FILTERING ARRAYS:
+    // this is a pure function because it does not modify the array it is given
+    1. function filter(array, test) {
+        let passed = [];
+
+        for (element of array) {
+            if (test(element)) {
+                passed.push(element);
+            };
+        }
+
+        return passed;
+    }
+
+    console.log(filter(SCRIPTS, script => script.living));
+    // → [{name: "Adlam", …}, …]
+
+    2. this is a higher order function
+
+    NOTE: Filter is a standard method
+    Ex:
+        console.log(SCRIPTS.filter(s => s.direction == "ttb"));
+        // → [{name: "Mongolian", …}, …]
+
+MAP FUNCTION: TRANSFORMING WITH MAP:
+    1.  The map method transforms an array by applying a function to all of its elements and building a 
+    new array from the returned values
+    2.  Map is a standard array method
+    3. this is a higher order function
+    Ex:
+    function map(array, transform) {
+
+        let mapped = [];
+        for (let element of array) {
+            mapped.push(transform(element));
+        }
+        return mapped;
+    }
+
+    let rtlScripts = SCRIPTS.filter(s => s.direction == "rtl");
+    console.log(map(rtlScripts, s => s.name));
+    // → ["Adlam", "Arabic", "Imperial Aramaic", …]
+
+REDUCE ARRAY METHOD:
+    1.  It is a common thing to compute a single value from array
+    2.  This is a higher-order function
+    3.  The parameters to reduce function are 
+        a.  Array 
+        b.  Function 
+        c.  Start Value(Initial)
+    4. REDUCE AKA FOLD
+        Ex:
+            function reduce(array, combine, start) {
+
+                let current = start;
+
+                for (let element of array) {
+                    current = combine(current, element);
+                }
+
+                return current;
+            }
+            console.log(reduce([1, 2, 3, 4], (a, b) => a + b, 0));
+    5.  If no 'start value' is provided, The method will take the first element of the array as its start value 
+        and start reducing at the second element.
+
+        console.log([1, 2, 3, 4].reduce((a, b) => a + b));
+        // → 10
+
+        function characterCount(script) {
+            return script.ranges.reduce((count, [from, to]) => {
+                return count + (to - from);
+            }, 0);
+        }
+
+        console.log(SCRIPTS.reduce((a, b) => {
+            return characterCount(a) < characterCount(b) ? b : a;
+        }));
+        // → {name: "Han", …}
+
+COMPOSABILITY:
+
+    1.  function average(array) {
+            return array.reduce((a, b) => a + b) / array.length;
+        }
+
+        console.log(Math.round(average(
+        SCRIPTS.filter(s => s.living).map(s => s.year))));
+        // → 1188
+        console.log(Math.round(average(
+        SCRIPTS.filter(s => !s.living).map(s => s.year))));
+    // → 188
+    2.  You could definitely also write this computation as one big loop.
+        let total = 0, count = 0;
+        for (let script of SCRIPTS) {
+            if (script.living) {
+                total += script.year;
+                count += 1;
+            }
+        }
+        console.log(Math.round(total / count));
+        // → 1188
+
+    NOTE: 
+        In terms of what the computer is actually doing, these two approaches are
+        also quite different. The first will build up new arrays when running filter
+        and map, whereas the second computes only some numbers, doing less work.
+
+        You can usually afford the readable approach, but if you’re processing huge
+        arrays, and doing so many times, the less abstract style might be worth the
+        extra speed.
+
+STRINGS AND CHARACTER CODES:
+    1.  function characterScript(code) {
+            for (let script of SCRIPTS) {
+                if (script.ranges.some(([from, to]) => {
+                    return code >= from && code < to;
+                })) {
+                return script;
+                }
+            }
+            91
+            return null;
+        }
+        console.log(characterScript(121));
+        // → {name: "Latin", …}
+
+        NOTE:   The some method is another higher-order function. It takes a test function
+                and tells you whether that function returns true for any of the elements in the
+                array.
+        The some() method checks if any of the elements in an array pass a test (provided as a function).
+
+        The some() method executes the function once for each element present in the array:
+
+        If it finds an array element where the function returns a true value, some() returns true (and does not check the remaining values)
+        Otherwise it returns false
+        Note: some() does not execute the function for array elements without values.
+
+        Note: some() does not change the original array.
+    2.  Some noteworthy examples:
+        // Two emoji characters, horse and shoe
+        let horseShoe = "🐴👟";
+        console.log(horseShoe.length);
+        // → 4
+        console.log(horseShoe[0]);
+        // → (Invalid half-character)
+        console.log(horseShoe.charCodeAt(0));
+        // → 55357 (Code of the half-character)
+        console.log(horseShoe.codePointAt(0));
+        // → 128052 (Actual code for horse emoji)
+
+        NOTE:
+        a. Javascript's 'charCodeAt' method gives you a code unit, not a full character code.
+        b. codePointAt method does give a full Unicode character
+
+        let roseDragon = "🌹🐉";
+        for (let char of roseDragon) {
+            console.log(char);
+        }
+        // → 🌹
+        // → �
+    3. findIndex method:
+        It uses another array method—findIndex. This method is somewhat like
+        indexOf, but instead of looking for a specific value, it finds the first value for
+        which the given function returns true. Like indexOf, it returns -1 when no such
+        element is found.

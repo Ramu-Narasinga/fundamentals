@@ -1,0 +1,96 @@
+NOTE: Execute Answers in chrome console
+
+1.  A vector type:
+
+    Q.  Write a class Vec that represents a vector in two-dimensional space. It takes
+        x and y parameters (numbers), which it should save to properties of the same name
+
+    A: class Vec {
+            constructor(x, y, element=(x, y) => undefined) {
+
+                this.vector={};
+
+                this.name=x.toString() + y.toString();
+
+                this.vector[this.name]=element(x, y);
+            }
+        }
+
+        let vec = new Vec(4, 5, (x, y) => `(${x}, ${y})`)
+
+        Refer to image: in images folder: 'vector-exer1.png'
+
+    Q.  Give the Vec prototype two methods, plus and minus, that take another
+        vector as a parameter and return a new vector that has the sum or difference
+        of the two vectors’ (this and the parameter) x and y values.
+    
+    A:  class Vec8 {
+            constructor(x, y, element=(x, y) => undefined) {
+
+                this.vector={};
+
+                this.name=x.toString() + y.toString();
+
+                this.vector[this.name]=element(x, y);
+            }
+
+            getVectorAfterOperation(vectorStr, operation, x, y) {
+
+                // sample vector object, which explains the following operations of string
+//                 {
+//                     name: "45"
+//                     vector: {
+//                         "45": "(4, 5)"
+//                     }
+//                 }
+
+                let currentVec = vectorStr.substring(1, vectorStr.length-1);
+
+                currentVec = currentVec.split(",");
+
+                let currentX = parseInt(currentVec[0]);
+
+                let curremtY = parseInt(currentVec[1]);
+
+                if (operation == "plus") {
+
+                    let sumX = currentX + x;
+
+                    let sumY = curremtY + y;
+
+                    return new Vec8(sumX, sumY, (x, y) => `(${x}, ${y})`);
+
+                } else if (operation == "minus") {
+
+                    let minusX = currentX - x;
+
+                    let minusY = curremtY - y;
+
+                    return new Vec8(minusX, minusY, (x, y) => `(${x}, ${y})`);
+
+                }
+            }
+
+            // functions defined here are available in __prototype__
+            plus(x, y) {
+                
+                console.log("this in plus", this, "x, y", x, y);
+
+                let currentVec = this.vector[this.name];
+
+                return this.getVectorAfterOperation(currentVec, "plus", x, y);
+            }
+
+            minus(x, y) {
+
+                console.log("this in plus", this, "x, y", x, y);
+
+                let currentVec = this.vector[this.name];
+
+                return this.getVectorAfterOperation(currentVec, "minus", x, y);
+            }
+        }
+
+        let vec8 = new Vec8(9, 17, (x,y) => `(${x}, ${y})`);
+
+        vec8.plus(8, 6);

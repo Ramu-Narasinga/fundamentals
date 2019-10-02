@@ -1,0 +1,498 @@
+ENCAPSULATION:
+    1.  the core idea in object oriented programming is to divide programs into smaller pieces and make each
+        piece responsible for managing its own state.
+    2.  Different pieces of such program interact with each other through interfaces, limited sets of functions
+        or bindings that provide useful functionality at a more abstract level, hiding their precise implementation
+    3.  Separating interface from implementation is a great idea. It is usually called encapsulation.
+
+METHODS:
+    1.  Methods are properties in an object that hold functions as values.
+        Ex1: 
+            let rabbit = {};
+            rabbit.speak = function(line) {
+            console.log(`The rabbit says '${line}'`);
+            };
+            rabbit.speak("I'm alive.");
+            // → The rabbit says 'I'm alive.'
+        Ex2:
+            function speak(line) {
+                console.log(`The ${this.type} rabbit says '${line}'`);
+            }
+            let whiteRabbit = {type: "white", speak};
+            let hungryRabbit = {type: "hungry", speak};
+            whiteRabbit.speak("Oh my ears and whiskers, " +
+            "how late it's getting!");
+            // → The white rabbit says 'Oh my ears and whiskers, how
+            // late it's getting!'
+            hungryRabbit.speak("I could use a carrot right now.");
+            // → The hungry rabbit says 'I could use a carrot right now.'
+        NOTE:   
+            a.  Usually a method needs to do something with the object it was called on.
+                When a function is called as a method—looked up as a property and immediately called, 
+                as in object.method()—the binding called 'this' in its body automatically points at the object that 
+                it was called on.
+            b.  You can think of 'this' as an extra parameter that is passed in a different
+                way. If you want to pass it explicitly, you can use a function’s call method,
+                which takes the 'this' value as its first argument and treats further arguments
+                as normal parameters.
+
+        Ex3:
+            speak.call(hungryRabbit, "Burp!");
+            // → The hungry rabbit says 'Burp!'
+    2.  IMPORTANT DISTICTION BETWEEN 'NORMAL FUNCION(FUNCTION DEFINED WITH KEYWORD FUNCTION)' AND 'ARROW FUNCTION'
+        a.  Since each function has its own 'this' binding, whose value depends on the
+            way it is called, you cannot refer to the 'this' of the wrapping scope in a regular
+            function defined with the function keyword.
+        b.  Arrow functions are different—they do not bind their own 'this' but can see
+            the 'this' binding of the scope around them. Thus, you can do something like
+            the following code, which references 'this' from inside a local function:
+
+            Ex1:
+                function normalize() {
+                    console.log(this.coords.map(n => n / this.length));
+                }
+                normalize.call({coords: [0, 2, 3], length: 5});
+                // → [0, 0.4, 0.6]
+
+PROTOTYPES:
+    1.  Watch closely.
+        let empty = {};
+        console.log(empty.toString);
+        // → function toString()…{}
+        console.log(empty.toString());
+        // → [object Object]
+        The above is an example of prototypes, 
+    2.  In addition to their set of properties, most objects also have a prototype
+    3.  What is a prototype?
+        A prototype is another object that is used as a fallback source of properties
+    4.  When an object gets a request for the property that it does not have, its prototype will be searched for
+        the property, then the prototype's prototype, and so on.
+    5.  So who is the prototype of that empty object? It is the great ancestral
+        prototype, the entity behind almost all objects, Object.prototype.
+
+        #Object.getPrototypeOf
+        #Object.prototype
+        Ex1: 
+            console.log(Object.getPrototypeOf({}) == Object.prototype);
+            // → true
+        Ex2:
+            console.log(Object.getPrototypeOf(Object.prototype));
+            // → null
+        Ex3:
+            console.log(Object.getPrototypeOf(Math.max) == Function.prototype);
+            // → true
+        EX4:
+            console.log(Object.getPrototypeOf([]) == Array.prototype);
+            // → true
+        
+        #Object.create:
+            use Object.create to create an object with a specific prototype
+        Ex5:
+            let protoRabbit = {
+                speak(line) {
+                    console.log(`The ${this.type} rabbit says '${line}'`);
+                }
+            };
+            let killerRabbit = Object.create(protoRabbit);
+
+            killerRabbit.type = "killer";
+            killerRabbit.speak("SKREEEE!");
+            // → The killer rabbit says 'SKREEEE!'
+
+CLASSES:
+    1.  Class defines the shape of a type of object-what methods and properties it has. 
+        Such an object is called 'instance' of an object.
+        a.  Prototypes are useful for defining properties for which all instances of a class
+            share the same value, such as methods. Properties that differ per instance,
+            such as our rabbits’ type property, need to be stored directly in the objects
+            themselves.
+
+    NOTE:   What does constructor function do?
+                So to create an instance of a given class, you have to make an object that derives from the 
+                proper prototype, but you also have to make sure it, itself, has the properties that instances
+                of this class are supposed to have.
+            Ex: 
+                function makeRabbit(type) {
+
+                    let rabbit = Object.create(protoRabbit);
+                    rabbit.type = type;
+                    return rabbit;
+                }
+
+            When is a function treated as a constructor?
+                use new in front of a function call, as shown in the following example
+            Ex:
+                function rabbit(type) {
+                    this.type = type;
+                }
+
+                Rabbit.prototype.speak = function(line) {
+                    console.log(`The ${this.type} rabbit says '${line}'`);
+                }
+
+                let weirdRabbit = new Rabbit("weird");
+    2.  Constructors (infact, all functions) automatically get a property named prototype,
+        which, by default, holds a plain, empty object that dervies from Object.prototype
+    3.  By convention, names of constructors are captilized, to make a distiction between constructor and other 
+        objects
+    4.  It is important to understand the distinction between the way a protoype is associated with a constructor
+        (through its prototype property) and the way objects have a prototype (which can be found with 
+        Object.getPrototypeOf)
+
+        #FACT:
+            The actual protoype of a constructor is Function.prototype since constructors are functions.
+            Its prototype property holds the prototype used for instances created through it.
+        
+        Ex1:
+            console.log(Object.getPrototypeOf(Rabbit) == Function.prototype);
+            // → true
+            console.log(Object.getPrototypeOf(weirdRabbit) == Rabbit.prototype);
+            // → true
+
+CLASS NOTATION:
+    1.  So Javascript classes are constructor functions with a prototype property. That is how they work, 
+        AND UNTIL 2015, that was how you had to write them.
+        These days we have a less awkward notation.
+
+        class Rabbit {
+            constructor(type) {
+                this.type = type;
+            }
+
+            speak(line) {
+                console.log(`The ${this.type} rabbit says '${line}'`);
+            }
+        }
+
+        let killerRabbit = new Rabbit("killer");
+        let blackRabbit = new Rabbit("black");
+    2.  class keyword starts a class declaration, which allows us to define a constructor and a set of methods
+        all in a single place.
+        Any number of methods may be written inside the declaration's braces.
+        Constructor function is treated specially, and the other methods and properties are packaged into that
+        constructor's prototype
+
+        Ex1:
+            let object = new class { getWord() { return "hello"; } };
+            console.log(object.getWord());
+            // → hello 
+
+OVERRIDING DERIVED PROPERTIES
+    1.  When you add a property to a object, whether it is present in the prototype or not, the property is added
+        to the object itself.
+    2.  If there was already a property with the same name in the prototype, this property will no longer affect the
+        object, as it is now hidden behind the object's own property.
+    Ex1:
+        Rabbit.prototype.teeth = "small";
+        console.log(killerRabbit.teeth);
+        // → small
+
+        killerRabbit.teeth = "long, sharp, and bloody";
+        console.log(killerRabbit.teeth);
+        // → long, sharp, and bloody
+
+        console.log(blackRabbit.teeth);
+        // → small
+
+        console.log(Rabbit.prototype.teeth);
+        // → small
+    3.  console.log(Array.prototype.toString ==
+        Object.prototype.toString);
+        // → false
+
+        console.log([1, 2].toString());
+        // → 1,2
+
+        Calling toString on an array gives a result similar to calling .join(",") on it.
+        console.log(Object.prototype.toString.call([1, 2]));
+        // → [object Array]
+
+MAPS:
+    1.  A map is a data structure that associates values with other values
+        Ex1: let ages = {
+                Boris: 39,
+                Liang: 22,
+                Júlia: 62
+            };
+
+            console.log(`Júlia is ${ages["Júlia"]}`);
+            // → Júlia is 62
+
+            console.log("Is Jack's age known?", "Jack" in ages);
+            // → Is Jack's age known? false
+
+            console.log("Is toString's age known?", "toString" in ages);
+            // → Is toString's age known? true // dangerous bc it shows true for something from prototype
+    2.  toString property is derived from Object.prototype
+    3.  Create objects with no prototype using  Object.create(null); // can safely map now
+        Ex2:    console.log("toString" in Object.create(null));
+                // → false
+    4. JS has a way to create objects without any prototypes as following
+        let ages = new Map();
+        ages.set("Boris", 39);
+        ages.set("Liang", 22);
+        ages.set("Júlia", 62);
+
+        console.log(`Júlia is ${ages.get("Júlia")}`);
+        // → Júlia is 62
+
+        console.log("Is Jack's age known?", ages.has("Jack"));
+        // → Is Jack's age known? false
+
+        console.log(ages.has("toString"));
+        // → false
+
+        the 'set', 'get', 'has' are all part of the interface of the Map object
+    5.  Object.keys returns only keys from object, not the prototype keys
+    6.  As an alternative to the 'in' operator, you can use the hasOwnProperty method, which ignores the object's
+        prototype
+
+        Ex2:    console.log({x: 1}.hasOwnProperty("x"));
+                // → true
+                console.log({x: 1}.hasOwnProperty("toString"));
+                // → false
+
+POLYMORPHISM:
+    1. An example of POLYMORPHISM.
+        Rabbit.prototype.toString = function() {
+            return `a ${this.type} rabbit`;
+        };
+
+        console.log(String(blackRabbit));
+        // → a black rabbit
+    
+    2.  here key thing to note is that toString acts like an interface and any object that supports toString 
+        interface works fine 
+
+SYMBOLS:
+    1.  It is possible that multiple interfaces use the same property name for different things.
+        For example, if you have defined toString interface to return some string appended, it would be 
+        difficult to conform to both that interface and string converting functionality.
+    2. this is common problem which developers won't think about, but designers do. This is where Symbols come 
+        into picture
+    3. Way to create a Symbol.
+        Ex: let sym = Symbol("name");
+            console.log(sym == Symbol("name"));
+            // → false
+            Rabbit.prototype[sym] = 55;
+            console.log(blackRabbit[sym]);
+            // → 55
+    4.  Symbols are values created with Symbol function.
+    5.  Unlike strings, newly created symbols are unique-you cannot create same symbol twice
+        Ex1:
+            const toStringSymbol = Symbol("toString");
+            Array.prototype[toStringSymbol] = function() {
+                return `${this.length} cm of blue yarn`;
+            };
+
+            console.log([1, 2].toString());
+            // → 1,2
+    
+            console.log([1, 2][toStringSymbol]());
+            // → 2 cm of blue yarn
+
+        Ex2:
+            let stringObject = {
+                [toStringSymbol]() { return "a jute rope"; }
+            };
+
+            console.log(stringObject[toStringSymbol]());
+            // → a jute rope
+
+ITERATOR INTERFACE:
+    1. object given to for/of must be iterable
+    2. it has an property named Symbol.iterator
+        Ex1:
+            let okIterator = "OK"[Symbol.iterator]();
+            console.log(okIterator.next());
+            // → {value: "O", done: false}
+            console.log(okIterator.next());
+            // → {value: "K", done: false}
+            console.log(okIterator.next());
+            // → {value: undefined, done: true}
+    3. Writing your own Iterator for matrix
+        // step1
+        // define a class with initialization, get, set methods
+        class Matrix {
+            constructor(width, height, element = (x, y) => undefined) {
+                this.width = width;
+                this.height = height;
+                this.content = [];
+                for (let y = 0; y < height; y++) {
+                    for (let x = 0; x < width; x++) {
+                        this.content[y * width + x] = element(x, y);
+                    }
+                }
+            }
+            get(x, y) {
+                return this.content[y * this.width + x];
+            }
+            set(x, y, value) {
+                this.content[y * this.width + x] = value;
+            }
+        }
+
+        let matrix = new Matrix(2, 2, (x, y) => `value ${x},${y}`);
+
+        for (let {x, y, value} of matrix) {
+            console.log(x, y, value);
+        }
+        NOTE: doing for/of here after defining class like above does not make it iterable, matrix is not iterable'
+        error is thrown
+
+        // create iterator for matrix, which returns position x,y along with values
+        class MatrixIterator {
+            constructor(matrix) {
+                this.x = 0;
+                this.y = 0;
+                this.matrix = matrix;
+            }
+
+            next() {
+                if (this.y == this.matrix.height) return {done: true};
+
+                let value = {
+                    x: this.x,
+                    y: this.y,
+                    value: this.matrix.get(this.x, this.y)
+                };
+
+                this.x++;
+
+                if (this.x == this.matrix.width) {
+                    this.x = 0;
+                    this.y++;
+                }
+
+                    return {value, done: false};
+                }
+        }
+
+        // update iterator code
+        Matrix.prototype[Symbol.iterator] = function() {
+            return new MatrixIterator(this);
+        };
+
+        let matrix = new Matrix(2, 2, (x, y) => `value ${x},${y}`);
+
+        for (let {x, y, value} of matrix) {
+            console.log(x, y, value);
+        }
+        // → 0 0 value 0,0
+        // → 1 0 value 1,0
+        // → 0 1 value 0,1
+        // → 1 1 value 1,1
+
+GETTERS, SETTERS, AND STATICS:
+    1.  major difference in using get before a variable/function is show in images getter-ex-1, getter-ex-2,
+        in terms of object prototypes,
+        simply put, getters and setters functions are attached in prototype
+    2.  Ex1: 
+        let varyingSize = {
+            get size() {
+                return Math.floor(Math.random() * 100);
+            }
+        };
+        console.log(varyingSize.size);
+        // → 73
+        console.log(varyingSize.size);
+        // → 49
+    3.  Ex2:
+        class Temperature {
+            constructor(celsius) {
+                this.celsius = celsius;
+            }
+            get fahrenheit() {
+                return this.celsius * 1.8 + 32;
+            }
+            set fahrenheit(value) {
+                this.celsius = (value - 32) / 1.8;
+            }
+            static fromFahrenheit(value) {
+                return new Temperature((value - 32) / 1.8);
+            }
+        }
+
+        let temp = new Temperature(22);
+
+        console.log(temp.fahrenheit);
+        // → 71.6
+
+        // setter example
+        temp.fahrenheit = 86;
+        console.log(temp.celsius);
+        // → 30
+    4.  Sometimes, you want to attach some properties directly to constructor, rather than to the prototypes,
+        Such methods won't have access to a class instance, but can, for example, be used to provide additional ways
+        to create new instances
+    5.  Inside a class declaration, methods that have static written before their name are stored on the constructor
+
+INHERITANCE:
+    1. Inheritance provides a way for a class to reuse code from existing libraries and add more properties 
+        to the one that is inheriting other class properties
+    2. The new class inherits properties and behavior from old class
+        Ex: 
+            class SymmetricMatrix extends Matrix { 
+                constructor(size, element = (x, y) => undefined) { 
+                    super(size, size, (x, y) => { 
+                        if (x < y) return element(y, x); 
+                        else return element(x, y); }); 
+                } 
+                
+                set(x, y, value) { 
+                    super.set(x, y, value); 
+                    if (x != y) { 
+                        super.set(y, x, value); 
+                    } 
+                }
+
+            }
+
+            let matrix = new SymmetricMatrix(5, (x, y) => `${x},${y}`); 
+            console.log(matrix.get(2, 3));
+    3. Inheritance allows us to build slighlty different data types from existing data types with relatively 
+        little work
+    4. Inhertiance is fundamental part of object-oriented programming, along side encapsulation and polymorphism
+    5. Polymorphism and encapsulation are used to separate pieces of code from each other, reducing tangledness
+        of overall program, Inhertiance fundamentally ties classes together-> more tangledness
+
+INSTANCEOF:
+    1.  It is occassionally useful to know whether an object was derived from a specific class
+        Ex: console.log( new SymmetricMatrix(2) instanceof SymmetricMatrix);
+            // → true 
+            console.log(new SymmetricMatrix(2) instanceof Matrix); 
+            // → true 
+            console.log(new Matrix(2, 2) instanceof SymmetricMatrix); 
+            // → false 
+            console.log([1] instanceof Array); 
+            // → true
+
+SUMMARY:
+    So objects do more than just hold their own properties. They have prototypes,
+    which are other objects. They’ll act as if they have properties they don’t have
+    as long as their prototype has that property. Simple objects have Object.
+    prototype as their prototype.
+
+    Constructors, which are functions whose names usually start with a capital
+    letter, can be used with the new operator to create new objects. The new
+    object’s prototype will be the object found in the prototype property of the
+    constructor. You can make good use of this by putting the properties that all
+    values of a given type share into their prototype. There’s a class notation that
+    provides a clear way to define a constructor and its prototype.
+    You can define getters and setters to secretly call methods every time an
+    object’s property is accessed. Static methods are methods stored in a class’s
+    constructor, rather than its prototype.
+
+    The instanceof operator can, given an object and a constructor, tell you
+    whether that object is an instance of that constructor.
+    One useful thing to do with objects is to specify an interface for them and
+    tell everybody that they are supposed to talk to your object only through that
+    interface. The rest of the details that make up your object are now encapsulated,
+    hidden behind the interface.
+    
+    More than one type may implement the same interface. Code written to use
+    an interface automatically knows how to work with any number of different
+    objects that provide the interface. This is called polymorphism.
+    When implementing multiple classes that differ in only some details, it can
+    be helpful to write the new classes as subclasses of an existing class, inheriting
+    part of its behavior.
