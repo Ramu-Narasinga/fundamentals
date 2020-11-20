@@ -34,15 +34,16 @@ NOTE: Execute Answers in chrome console
                 this.vector[this.name]=element(x, y);
             }
 
+            // also return array of parsed vector coordinates
             getVectorAfterOperation(vectorStr, operation, x, y) {
 
                 // sample vector object, which explains the following operations of string
-//                 {
-//                     name: "45"
-//                     vector: {
-//                         "45": "(4, 5)"
-//                     }
-//                 }
+                // {
+                     // name: "45"
+                     // vector: {
+                         //"45": "(4, 5)"
+                    // }
+                // }
 
                 let currentVec = vectorStr.substring(1, vectorStr.length-1);
 
@@ -50,13 +51,13 @@ NOTE: Execute Answers in chrome console
 
                 let currentX = parseInt(currentVec[0]);
 
-                let curremtY = parseInt(currentVec[1]);
+                let currentY = parseInt(currentVec[1]);
 
                 if (operation == "plus") {
 
                     let sumX = currentX + x;
 
-                    let sumY = curremtY + y;
+                    let sumY = currentY + y;
 
                     return new Vec8(sumX, sumY, (x, y) => `(${x}, ${y})`);
 
@@ -64,10 +65,12 @@ NOTE: Execute Answers in chrome console
 
                     let minusX = currentX - x;
 
-                    let minusY = curremtY - y;
+                    let minusY = currentY - y;
 
                     return new Vec8(minusX, minusY, (x, y) => `(${x}, ${y})`);
 
+                } else {
+                    return [currentX, currentY];
                 }
             }
 
@@ -89,8 +92,157 @@ NOTE: Execute Answers in chrome console
 
                 return this.getVectorAfterOperation(currentVec, "minus", x, y);
             }
+
+            get length() {
+
+                let currentVec = this.vector[this.name];
+
+                let vec = this.getVectorAfterOperation(currentVec);
+
+                // calculate distance from origin: sqrt(x^2 + y^2)
+                return Math.sqrt(Math.pow(vec[0], 2) + Math.pow(vec[1], 2));
+            }
         }
 
         let vec8 = new Vec8(9, 17, (x,y) => `(${x}, ${y})`);
 
         vec8.plus(8, 6);
+
+        vec8.minus(9,8);
+
+        vec8.length; // note that get method length defined is not a function
+
+2.  Write a class called Group (since Set is already taken). Like Set, it has add,
+    delete, and has methods. Its constructor creates an empty group, add adds
+    a value to the group (but only if it isn’t already a member), delete removes
+    its argument from the group (if it was a member), and has returns a Boolean
+    value indicating whether its argument is a member of the group.
+
+A:  class Group {
+
+        constructor(members) {
+
+            this.members = [];
+
+            for (let j = members[0]; j < members[1]; j++) {
+                this.members.push(j);
+            }
+        }
+
+        has(mem) {
+
+            let index = this.members.indexOf(mem);
+
+            return index != -1 ? true : false;
+        }
+
+        add(mem) {
+
+            // do not add if an element already exists
+            let index = this.members.indexOf(mem);
+
+            if (index == -1) {
+                this.members.push(mem);
+            }
+        }
+
+        delete(mem) {
+
+            // find index
+            let index = this.members.indexOf(mem);
+
+            this.members.splice(index, 1);
+        }
+
+        static from (members) {
+
+            return new Group(members);
+        }
+    }
+
+3.  Iterable groups
+    Make the Group class from the previous exercise iterable. If you used an array to represent the group’s 
+    members, don’t just return the iterator created by calling the Symbol.iterator method on the array. That
+    would work, but it defeats the purpose of this exercise.
+
+A:  class Group {
+
+        constructor(members) {
+
+            this.members = [];
+
+            //for (let j = members[0]; j < members[1]; j++) {
+                //this.members.push(j);
+            //}
+
+            members.forEach((item) => this.members.push(item))
+        }
+
+        has(mem) {
+
+            let index = this.members.indexOf(mem);
+
+            return index != -1 ? true : false;
+        }
+
+        add(mem) {
+
+            // do not add if an element already exists
+            let index = this.members.indexOf(mem);
+
+            if (index == -1) {
+                this.members.push(mem);
+            }
+        }
+
+        delete(mem) {
+
+            // find index
+            let index = this.members.indexOf(mem);
+
+            this.members.splice(index, 1);
+        }
+
+        static from (members) {
+
+            return new Group(members);
+        }
+
+        [Symbol.iterator] = function() {
+            return new GroupIterator(this);
+        };
+    }
+
+    class GroupIterator {
+        constructor(group) {
+
+            this.group = group;
+
+            this.index = 0;
+        }
+
+        next() {
+
+            if(this.index >= this.group.members.length) {
+
+                return {
+                    done: true 
+                };
+            } else {
+
+            let value = {
+
+                index: this.index,
+
+                value: this.group.members[this.index]
+            }
+
+            this.index++;
+
+            return {
+                    value,
+                    done: false
+                   };
+            }
+        }
+    }
